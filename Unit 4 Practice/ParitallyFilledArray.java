@@ -45,6 +45,29 @@ public class ParitallyFilledArray
         this.values[index1] = this.values[index2];
         this.values[index2] = tempValue;
     }
+    
+    public void insertElement(int value)
+    {
+        if (this.currentSize == this.values.length)
+        {
+            growArray();
+        }
+        this.values[currentSize] = value;
+        currentSize++;
+    }
+    
+    public void growArray()
+    {
+        int newArraySize = this.values.length * 2;
+        int[] newArray = new int[newArraySize];
+        
+        for (int i = 0; i < this.values[i];)
+        {
+            newArray[i] = this.values[i];
+        }
+        
+        this.values = newArray;
+    }
 }
 
 
