@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 /**
  * The model for radar scan and accumulator
  * 
@@ -24,9 +25,21 @@ public class Radar
     // number of scans of the radar since construction
     private int numScans;
     
-    // creating the slope
+    // creating the slope of monster
     private int changeX;
     private int changeY;
+    // instance variables needed to search for the monster
+    private int dY;
+    private int dX;
+    //making instance variables for these lists
+    public ArrayList<int[]> pastAlivePoints=new ArrayList<int[]>();
+    public ArrayList<int[]> currentAlivePoints=new ArrayList<int[]>();
+    //public ArrayList<int[]> slopesThatMeetCondition=new ArrayList<int[]>();
+    int slopesThatMeetCondition[][] = new int[11][11];
+    
+    
+    // initializing the Scan() method counter
+    int count= 0;
     /**
      * Constructor for objects of class Radar
      * 
@@ -41,8 +54,11 @@ public class Radar
         
         // randomly set the location of the monster (can be explicity set through the
         //  setMonsterLocation method
+        
         //monsterLocationRow = (int)(Math.random() * rows);
         //monsterLocationCol = (int)(Math.random() * cols);
+        
+        //taking in user input on the locaation and slope of the monster
         Scanner in = new Scanner(System.in);
         System.out.println("What is the row of the monster's starting location(0-99): ");
         monsterLocationRow = in.nextInt();
@@ -52,6 +68,7 @@ public class Radar
         changeX = in.nextInt();
         System.out.println("What is monster's change in y coordinate(0-5): ");
         changeY = in.nextInt();
+        
         
         
         noiseFraction = 0.05;
@@ -73,11 +90,66 @@ public class Radar
             }
         }
         
+        
+        
+        
         // detect the monster
-        currentScan[monsterLocationRow][monsterLocationCol] = true;
+        //currentScan[monsterLocationRow][monsterLocationCol] = true;
+        
         
         // inject noise into the grid
         injectNoise();
+        //added all the alive points (row,col) to an arrayList
+        if (count == 0)
+        {
+            //ArrayList<int[]> pastAlivePoints=new ArrayList<int[]>();
+            for(int row = 0; row < currentScan.length; row++)
+            {
+                for(int col = 0; col < currentScan[0].length; col++)
+                {
+                    if(currentScan[row][col] == true)
+                    {
+                        pastAlivePoints.add(new int[] {row,col});
+                        //System.out.println(pastAlivePoints.size());
+                    }
+                }
+            }
+            System.out.println(pastAlivePoints.size() + " first");
+        }
+        System.out.println("Between the action");
+        
+        if (count !=0)
+        {
+            System.out.println(pastAlivePoints.size() + " Past");
+            ArrayList<int[]> currentAlivePoints=new ArrayList<int[]>();
+            for(int row = 0; row < currentScan.length; row++)
+            {
+                for(int col = 0; col < currentScan[0].length; col++)
+                {
+                    if(currentScan[row][col] == true)
+                    {
+                        currentAlivePoints.add(new int[] {row,col});
+                        //System.out.println(currentAlivePoints.size());
+                    }
+                }
+            }
+            System.out.println(currentAlivePoints.size() + " Current");
+            for(int i = 0; i < pastAlivePoints.size(); i++)
+            {
+                for (int j = 0; j < currentAlivePoints.size(); j++)
+                {
+                    int dY= (currentAlivePoints.get(j)[0] - pastAlivePoints.get(i)[0]);
+                    int dX= (currentAlivePoints.get(j)[1] - pastAlivePoints.get(i)[1]);
+                    //System.out.println("This occurs");
+                    if ((dY > -5 && dY <5) && (dX > -5 && dX < 5))
+                    {
+                        slopesThatMeetCondition[dY+5][dX+5] ++;
+                        System.out.println("This actually works");
+                    }
+                }
+            }
+            currentAlivePoints = pastAlivePoints;
+        }
         
         // udpate the accumulator
         for(int row = 0; row < currentScan.length; row++)
@@ -92,6 +164,7 @@ public class Radar
         }
         
         // keep track of the total number of scans
+        count ++;
         numScans++;
     }
 
@@ -196,6 +269,7 @@ public class Radar
                 }
             }
         }
+       
         monsterLocationRow = monsterLocationRow + changeY;
         monsterLocationCol= monsterLocationCol + changeX;
         if (monsterLocationRow > 99)
