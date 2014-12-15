@@ -1,9 +1,10 @@
+import java.util.Scanner;
 import javax.swing.JFrame;
 /**
  * Class that contains the main method for the program and creates the frame containing the component.
  * 
- * @author @gcschmit
- * @version 19 July 2014
+ * @author @Riley Wiest
+ * @version 12/12/14
  */
 public class RadarViewer
 {
@@ -16,8 +17,19 @@ public class RadarViewer
         // create the radar, set the monster location, and perform the initial scan
         final int ROWS = 100;
         final int COLS = 100;
-        Radar radar = new Radar(ROWS, COLS);
-        radar.setNoiseFraction(0.05);
+        //taking in user input on the locaation and slope of the monster
+        Scanner in = new Scanner(System.in);
+        System.out.println("What is the row of the monster's starting location(0-99): ");
+        int monsterLocationRow = in.nextInt();
+        System.out.println("What is the column of the monster's starting location(0-99): ");
+        int monsterLocationCol = in.nextInt();
+        System.out.println("What is monster's change in x coordinate(0-5): ");
+        int changeX = in.nextInt();
+        System.out.println("What is monster's change in y coordinate(0-5): ");
+        int changeY = in.nextInt();
+        
+        Radar radar = new Radar(ROWS, COLS,monsterLocationRow,monsterLocationCol,changeY,changeX  );
+        radar.setNoiseFraction(0.01);
         radar.scan();
         
         JFrame frame = new JFrame();
@@ -38,7 +50,8 @@ public class RadarViewer
         
         // perform 100 scans of the radar wiht a slight pause between each
         // after each scan, instruct the Java Run-Time to redraw the window
-        for(int i = 0; i < 9; i++)
+        //int listOfSlopes[][] = new int[11][11];
+        for(int i = 0; i < 120; i++)
         {
             Thread.sleep(100); // sleep 100 milliseconds (1/10 second)
             
@@ -46,6 +59,9 @@ public class RadarViewer
             
             frame.repaint();
         }
+        
+        
+        int [] finalArray = radar.finalSlopes();
+        System.out.println(finalArray[0] + " " +finalArray[1] );
     }
-
 }
